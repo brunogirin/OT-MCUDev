@@ -1,2 +1,2 @@
 # OTMCUDev
-Repo for testing OpenTRV code on new MCUs.
+Repo for bootstrapping/testing OpenTRV code for new MCUs.
