@@ -39,6 +39,8 @@ int main(void)
     I2C::i2c.init(i2cInit);  // Initialise I2C peripheral
     GPIO_PinOutSet(SI7021_CE_PORT, SI7021_CE_PIN);  // Power up Si7021
 
+    for (auto i = 0; i < 100000; ++i) {}
+
     const int readVal = si7021.read();
 
 

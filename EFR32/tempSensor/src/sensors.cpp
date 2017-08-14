@@ -34,17 +34,17 @@ static void SHT21_init()
     if(SHT21_USE_REDUCED_PRECISION) {
         // Soft reset in order to sample at reduced precision.
         uint8_t cmd_ureg = SHT21_I2C_CMD_USERREG;
-        I2C::i2c.write(SHT21_I2C_ADDR, &cmd_ureg, 1); // initMsg
+        auto write1 = I2C::i2c.write(SHT21_I2C_ADDR, &cmd_ureg, 1); // initMsg
 
         // ????
-        uint8_t rxMsg;
-        I2C::i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
+        uint8_t rxMsg = 0;
+        auto read = I2C::i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
         const uint8_t curUR = rxMsg;
 
         // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
         const uint8_t newUR = (curUR & 0x38) | 3;
         uint8_t configMsg[2] = { SHT21_I2C_CMD_USERREG, newUR};
-        I2C::i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
+        auto write2 = I2C::i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
     }
     SHT21_initialised = true;
 }
@@ -70,7 +70,8 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
   //   * 11-bit: 11ms
   // Use blocking data fetch for now.
   uint8_t cmd_temp_hold = SHT21_I2C_CMD_TEMP_HOLD;
-  I2C::i2c.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
+  auto write1 = I2C::i2c.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
+
 
 #if 0
   if(SHT21_USE_REDUCED_PRECISION)
@@ -80,7 +81,8 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
     // Should be plenty for slowest (14-bit) conversion (85ms).
     { OTV0P2BASE::sleepLowPowerMs(90); }
 #endif
-  uint8_t rxMsg[2];
+  for (auto i = 0; i<100000; ++i){}
+  uint8_t rxMsg[2] = {0, 0};
   I2C::i2c.read(SHT21_I2C_ADDR, rxMsg, sizeof(rxMsg));
 #if 0
   while(Wire.available() < 3)

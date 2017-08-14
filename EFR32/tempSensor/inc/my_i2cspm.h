@@ -92,8 +92,8 @@ private:
     I2CSPM_Init_TypeDef i2cConfig;
 
 //    // TX and RX buffers note: unused in blocking transfer.
-//    uint8_t rxBuf[16];
-//    uint8_t txBuf[16];
+    uint8_t rxBuf[16];
+    uint8_t txBuf[16];
     I2C_TransferReturn_TypeDef transfer(I2C_TransferSeq_TypeDef &seq);
 public:
 

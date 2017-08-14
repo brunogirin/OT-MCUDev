@@ -111,6 +111,7 @@ void I2CSPM::init(I2CSPM_Init_TypeDef &config)
   i2cInit.clhr = i2cConfig.i2cClhr;
 
   I2C_Init(i2cConfig.port, &i2cInit);
+
 }
 
 
@@ -135,7 +136,7 @@ I2C_TransferReturn_TypeDef I2CSPM::transfer(I2C_TransferSeq_TypeDef &seq)
   uint32_t timeout = I2CSPM_TRANSFER_TIMEOUT;
   /* Do a polled transfer */
   ret = I2C_TransferInit(i2cConfig.port, &seq);
-  while (ret == i2cTransferInProgress && timeout--)
+  while (ret == i2cTransferInProgress /*&& timeout--*/)
   {
     ret = I2C_Transfer(i2cConfig.port);
   }
@@ -154,6 +155,8 @@ I2C_TransferReturn_TypeDef I2CSPM::read(uint16_t addr, uint8_t *buf, uint16_t le
     seq.flags = I2C_FLAG_READ;
     seq.buf[0].data = buf;
     seq.buf[0].len = len;
+    seq.buf[1].data = rxBuf;
+    seq.buf[1].len = sizeof(rxBuf);
     return transfer(seq);
 }
 /**
@@ -169,5 +172,7 @@ I2C_TransferReturn_TypeDef I2CSPM::write(uint16_t addr, uint8_t *buf, uint16_t l
     seq.flags = I2C_FLAG_WRITE;
     seq.buf[0].data = buf;
     seq.buf[0].len = len;
+    seq.buf[1].data = rxBuf;
+    seq.buf[1].len = sizeof(rxBuf);
     return transfer(seq);
 }
