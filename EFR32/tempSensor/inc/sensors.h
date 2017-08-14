@@ -8,6 +8,9 @@
 #ifndef SRC_SENSORS_H_
 #define SRC_SENSORS_H_
 
+#include <stdint.h>
+
+
 namespace OTV0P2BASE {
 
 #if 0
@@ -59,7 +62,7 @@ class Sensor : public SensorCore<T>
     // Preferred poll interval (in seconds) or 0 if no regular poll() call required.
     // Default returns 0 indicating regular call to read() not required,
     // only as required to fetch new values from the underlying sensor.
-    virtual uint8_t preferredPollInterval_s() const { return(0); }
+    virtual uint_fast8_t preferredPollInterval_s() const { return(0); }
 
 //    // Returns a suggested privacy/sensitivity level of the data from this sensor.
 //    // The default sensitivity is set to just forbid transmission at default (255) leaf settings.
@@ -81,17 +84,17 @@ class Sensor : public SensorCore<T>
 // May cover a wider range for other specialist monitoring.
 // Some devices may indicate an error by returning a zero or (very) negative value.
 // A returned value can be tested for validity with isErrorValue().
-class TemperatureC16Base : public Sensor<int16_t>
+class TemperatureC16Base : public Sensor<int_fast16_t>
   {
   public:
     // Error value returned if device unavailable or not yet read.
     // Negative and below minimum value that DS18B20 can return legitimately (-55C).
-    static constexpr int16_t DEFAULT_INVALID_TEMP = -128 * 16; // Nominally -128C.
+    static constexpr int_fast16_t DEFAULT_INVALID_TEMP = -128 * 16; // Nominally -128C.
 
   protected:
     // Room temperature in 16*C, eg 1 is 1/16 C, 32 is 2C, -64 is -4C.
     // Never expected to be updated or used in an ISR, so not marked volatile.
-    int16_t value = DEFAULT_INVALID_TEMP;
+    int_fast16_t value = DEFAULT_INVALID_TEMP;
 
     // Prevent instantiation of a naked instance.
     // Starts off with a detectably-invalid value, eg for before read() is called first.
@@ -100,34 +103,35 @@ class TemperatureC16Base : public Sensor<int16_t>
   public:
     // Returns true if the given value indicates, or may indicate, an error.
     // If false then the value passed is likely legitimate.
-    virtual bool isErrorValue(int16_t value) const { return(DEFAULT_INVALID_TEMP == value); }
+//    virtual bool isErrorValue(int_fast16_t value) const { return(DEFAULT_INVALID_TEMP == value); }
 
     // Returns number of useful binary digits after the binary point; default is 4.
     // May be negative if some of the digits BEFORE the binary point are not usable.
     // Some sensors may dynamically return fewer places.
-    virtual int8_t getBitsAfterPoint() const { return(4); }
+    virtual int_fast8_t getBitsAfterPoint() const { return(4); }
 
     // Returns true if fewer than 4 bits of useful data after the binary point.
     bool isLowPrecision() const { return(getBitsAfterPoint() < 4); }
 
     // Preferred poll interval (in seconds).
     // This should be called at a regular rate, usually 1/60, so make stats such as velocity measurement easier.
-    virtual uint8_t preferredPollInterval_s() const override { return(60); }
+    virtual uint_fast8_t preferredPollInterval_s() const override { return(60); }
 
     // Return last value fetched by read(); undefined before first read().
     // Fast.
     // Not thread-safe nor usable within ISRs (Interrupt Service Routines).
-    virtual int16_t get() const override { return(value); }
+    virtual int_fast16_t get() const override { return(value); }
 
     // Returns a suggested (JSON) tag/field/key name including units of get(); NULL means no recommended tag.
     // The lifetime of the pointed-to text must be at least that of the Sensor instance.
 //    virtual OTV0P2BASE::Sensor_tag_t tag() const override { return(V0p2_SENSOR_TAG_F("T|C16")); }
   };
-
-class RoomTemperatureC16_SHT21 final : public TemperatureC16Base
-  { public: virtual int16_t read(); };
-
 #endif
+
+class RoomTemperatureC16_SHT21 final //: public TemperatureC16Base
+  { public: int_fast16_t value = -2048; int_fast16_t read();};
+
+
 
 }
 #endif /* SRC_SENSORS_H_ */

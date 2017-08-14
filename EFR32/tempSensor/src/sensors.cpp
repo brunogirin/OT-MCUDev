@@ -10,7 +10,8 @@
 
 namespace OTV0P2BASE
 {
-#if 0
+#if 1
+
 
 static constexpr uint8_t SHT21_I2C_ADDR = 0x40;
 static constexpr uint8_t SHT21_I2C_CMD_TEMP_HOLD   = 0xe3;
@@ -28,37 +29,22 @@ static volatile bool SHT21_initialised;
 
 // Initialise/configure SHT21, usually once only.
 // TWI must already be powered up.
-static void SHT21_init(I2C_TypeDef *i2c)
+static void SHT21_init()
 {
-    uint8_t cmd_ureg = SHT21_I2C_CMD_USERREG;
     if(SHT21_USE_REDUCED_PRECISION) {
-        I2C_TransferSeq_TypeDef i2cTXMsg;
-        i2cTXMsg.addr = SHT21_I2C_ADDR;
-        i2cTXMsg.flags = I2C_FLAG_WRITE;
-        i2cTXMsg.buf[0].data = &cmd_ureg;
-        i2cTXMsg.buf[0].len = 1;
-
-        uint8_t rxMsg;
-        I2C_TransferSeq_TypeDef i2cRXMsg;
-        i2cRXMsg.addr = SHT21_I2C_ADDR;
-        i2cTXMsg.flags = I2C_FLAG_READ;
-        i2cTXMsg.buf[0].data = &rxMsg;
-        i2cTXMsg.buf[0].len = 1;
-
-
         // Soft reset in order to sample at reduced precision.
-        i2cTransfer(i2c, i2cTXMsg); // initMsg
+        uint8_t cmd_ureg = SHT21_I2C_CMD_USERREG;
+        I2C::i2c.write(SHT21_I2C_ADDR, &cmd_ureg, 1); // initMsg
 
         // ????
-        i2cTransfer(i2c, i2cRXMsg);
+        uint8_t rxMsg;
+        I2C::i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
         const uint8_t curUR = rxMsg;
 
         // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
         const uint8_t newUR = (curUR & 0x38) | 3;
         uint8_t configMsg[2] = { SHT21_I2C_CMD_USERREG, newUR};
-        i2cTXMsg.buf[0].data = configMsg;
-        i2cTXMsg.buf[0].len = 2;
-        i2cTransfer(i2c, i2cTXMsg); // setupMsg
+        I2C::i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
     }
     SHT21_initialised = true;
 }
@@ -69,7 +55,7 @@ static void SHT21_init(I2C_TypeDef *i2c)
 // Probably no need to do this more than (say) once per minute.
 // The first read will initialise the device as necessary
 // and leave it in a low-power mode afterwards.
-int16_t RoomTemperatureC16_SHT21::read()
+int_fast16_t RoomTemperatureC16_SHT21::read()
   {
 #if 0
   const bool neededPowerUp = OTV0P2BASE::powerUpTWIIfDisabled();
@@ -83,8 +69,9 @@ int16_t RoomTemperatureC16_SHT21::read()
   //   * 12-bit: 22ms
   //   * 11-bit: 11ms
   // Use blocking data fetch for now.
-  Wire.beginTransmission(SHT21_I2C_ADDR);
-  Wire.write((byte) SHT21_I2C_CMD_TEMP_HOLD); // Select control register.
+  uint8_t cmd_temp_hold = SHT21_I2C_CMD_TEMP_HOLD;
+  I2C::i2c.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
+
 #if 0
   if(SHT21_USE_REDUCED_PRECISION)
     // Should cover 12-bit conversion (22ms).
@@ -93,18 +80,20 @@ int16_t RoomTemperatureC16_SHT21::read()
     // Should be plenty for slowest (14-bit) conversion (85ms).
     { OTV0P2BASE::sleepLowPowerMs(90); }
 #endif
-  Wire.endTransmission();
-  Wire.requestFrom(SHT21_I2C_ADDR, 3U);
+  uint8_t rxMsg[2];
+  I2C::i2c.read(SHT21_I2C_ADDR, rxMsg, sizeof(rxMsg));
+#if 0
   while(Wire.available() < 3)
     {
-#if 0
       // Wait for data, but avoid rolling over the end of a minor cycle...
     if(OTV0P2BASE::getSubCycleTime() >= OTV0P2BASE::GSCT_MAX - 2)
       { return(DEFAULT_INVALID_TEMP); } // Failure value: may be able to to better.
-#endif
     }
-  uint16_t rawTemp = (Wire.read() << 8);
-  rawTemp |= (Wire.read() & 0xfc); // Clear status ls bits.
+#endif
+//  uint_fast16_t rawTemp = (Wire.read() << 8);
+//  rawTemp |= (Wire.read() & 0xfc); // Clear status ls bits.
+  uint_fast16_t rawTemp = (rxMsg[0] << 8);
+  rawTemp |= (rxMsg[1] & 0xfc);
 
 #if 0
   // Power down TWI ASAP.
@@ -114,7 +103,7 @@ int16_t RoomTemperatureC16_SHT21::read()
   // FIXME: find a good but faster approximation...
   // FIXME: should the shift/division be rounded to nearest?
   // FIXME: break out calculation and unit test against example in datasheet.
-  const int16_t c16 = -750 + int16_t((5623 * int_fast32_t(rawTemp)) >> 17);
+  const int_fast16_t c16 = -750 + int_fast16_t((5623 * int_fast32_t(rawTemp)) >> 17);
 
 #if 0
   // Capture entropy if (transformed) value has changed.

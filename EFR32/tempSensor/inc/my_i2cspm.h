@@ -102,5 +102,10 @@ public:
     I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *buf, uint16_t len);
 };
 
+namespace I2C {
+// class def
+extern I2CSPM i2c;
+}
+
 
 #endif /* SRC_MY_I2CSPMCONFIG_H_ */
