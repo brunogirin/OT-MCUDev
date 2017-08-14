@@ -140,7 +140,8 @@ I2C_TransferReturn_TypeDef I2CSPM::transfer(I2C_TransferSeq_TypeDef &seq)
  */
 I2C_TransferReturn_TypeDef I2CSPM::read(uint_fast8_t addr, uint8_t *buf, uint_fast8_t len)
 {
-    if((nullptr == buf) || (0 == len)) { return i2cTransferUsageFault; }
+    // Check buf not null, that we will actually write to it and that we won't overflow it.
+    if((nullptr == buf) || (0 == len) || (16 < len)) { return i2cTransferUsageFault; }
     I2C_TransferSeq_TypeDef seq;
     seq.addr = addr;
     seq.flags = I2C_FLAG_READ;
@@ -153,7 +154,8 @@ I2C_TransferReturn_TypeDef I2CSPM::read(uint_fast8_t addr, uint8_t *buf, uint_fa
  */
 I2C_TransferReturn_TypeDef I2CSPM::write(uint_fast8_t addr, uint8_t *buf, uint_fast8_t len)
 {
-    if((nullptr == buf) || (0 == len)) { return i2cTransferUsageFault; }
+    // Check buf not null, that we will actually write to it and that we won't overflow it.
+    if((nullptr == buf) || (0 == len) || (16 < len)) { return i2cTransferUsageFault; }
 
     I2C_TransferSeq_TypeDef seq;
     seq.addr = addr;

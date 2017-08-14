@@ -34,10 +34,10 @@ void SysTick_Handler()
 
 
 static constexpr uint8_t SHT21_I2C_ADDR = 0x40;
-static constexpr uint8_t SHT21_I2C_CMD_TEMP_HOLD   = 0xe3;
-static constexpr uint8_t SHT21_I2C_CMD_TEMP_NOHOLD = 0xf3;
-static constexpr uint8_t SHT21_I2C_CMD_RH_HOLD     = 0xe5;
-static constexpr uint8_t SHT21_I2C_CMD_RH_NOHOLD   = 0xf5;
+//static constexpr uint8_t SHT21_I2C_CMD_TEMP_HOLD   = 0xe3;
+//static constexpr uint8_t SHT21_I2C_CMD_TEMP_NOHOLD = 0xf3;
+//static constexpr uint8_t SHT21_I2C_CMD_RH_HOLD     = 0xe5;
+//static constexpr uint8_t SHT21_I2C_CMD_RH_NOHOLD   = 0xf5;
 static constexpr uint8_t SHT21_I2C_CMD_USERREG     = 0xe7; // User register...
 
 // If defined, sample 8-bit RH (for 1%) and 12-bit temp (for 1/16C).
