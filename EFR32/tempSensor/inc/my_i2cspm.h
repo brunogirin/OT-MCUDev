@@ -91,15 +91,15 @@ private:
     static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
     I2CSPM_Init_TypeDef i2cConfig;
 
-    // TX and RX buffers
-    uint8_t rxBuf[16];
-    uint8_t txBuf[16];
+//    // TX and RX buffers note: unused in blocking transfer.
+//    uint8_t rxBuf[16];
+//    uint8_t txBuf[16];
     I2C_TransferReturn_TypeDef transfer(I2C_TransferSeq_TypeDef &seq);
 public:
 
     void init(I2CSPM_Init_TypeDef &config);
-    I2C_TransferReturn_TypeDef read(uint_fast8_t addr, uint8_t *buf, uint_fast8_t len);
-    I2C_TransferReturn_TypeDef write(uint_fast8_t addr, uint8_t *buf, uint_fast8_t len);
+    I2C_TransferReturn_TypeDef read(uint16_t addr, uint8_t *buf, uint16_t len);
+    I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *buf, uint16_t len);
 };
 
 

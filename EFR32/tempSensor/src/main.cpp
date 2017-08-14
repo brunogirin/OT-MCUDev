@@ -18,10 +18,6 @@ extern "C" {  // Simplicity Studio headers. These are all C files.
 
 #include <my_i2cspm.h>
 
-I2C_TransferReturn_TypeDef write1;
-I2C_TransferReturn_TypeDef write2;
-I2C_TransferReturn_TypeDef read1;
-uint8_t randomValue = 0;
 
 // class def
 I2CSPM i2c;
@@ -55,14 +51,13 @@ void SHT21_Init()
 
         // ????
         uint8_t rxMsg;
-        read1 = i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
+        i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
         const uint8_t curUR = rxMsg;
-        randomValue = curUR;
 
         // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
         const uint8_t newUR = (curUR & 0x38) | 3;
         uint8_t configMsg[2] = { SHT21_I2C_CMD_USERREG, newUR};
-        write2 = i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
+        i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
     }
     SHT21_initialised = true;
 }
