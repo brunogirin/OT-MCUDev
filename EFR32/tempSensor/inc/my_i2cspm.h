@@ -7,7 +7,6 @@
 
 #ifndef SRC_MY_I2CSPMCONFIG_H_
 #define SRC_MY_I2CSPMCONFIG_H_
-#if 1
 /***************************************************************************//**
  * @file
  * @brief I2C simple poll-based master mode driver for the DK/STK.
@@ -94,12 +93,32 @@ typedef struct
 
 //#endif
 
-static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
 /*******************************************************************************
  *****************************   PROTOTYPES   **********************************
  ******************************************************************************/
-
+#if 0
 void I2CSPM_Init(I2CSPM_Init_TypeDef *init);
 I2C_TransferReturn_TypeDef I2CSPM_Transfer(I2C_TypeDef *i2c, I2C_TransferSeq_TypeDef *seq);
 #endif
+
+class I2CSPM
+{
+private:
+    static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
+    I2CSPM_Init_TypeDef config;
+
+//    // TX and RX buffers note: unused in blocking transfer.
+//    uint8_t rxBuf[16];
+//    uint8_t txBuf[16];
+    I2C_TransferReturn_TypeDef transfer(I2C_TransferSeq_TypeDef &seq);
+public:
+
+    void init(I2CSPM_Init_TypeDef &init);
+    I2C_TransferReturn_TypeDef read(uint16_t addr, uint8_t * const cmd, uint16_t cmdLen, uint8_t * const rxBuf, uint16_t rxLen);
+    I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *buf, uint16_t len);
+};
+
+extern I2CSPM i2c0;
+
+
 #endif /* SRC_MY_I2CSPMCONFIG_H_ */

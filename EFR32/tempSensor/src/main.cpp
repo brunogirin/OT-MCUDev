@@ -42,67 +42,28 @@ static constexpr uint8_t SHT21_I2C_CMD_USERREG     = 0xe7; // User register...
 
 // If defined, sample 8-bit RH (for 1%) and 12-bit temp (for 1/16C).
 // Reduced precision should save time and energy.
-static constexpr bool SHT21_USE_REDUCED_PRECISION = true;
+//static constexpr bool SHT21_USE_REDUCED_PRECISION = true;
 
 // Set true once SHT21 has been initialised.
-static volatile bool SHT21_initialised;
+//static volatile bool SHT21_initialised;
 
 // Initialise/configure SHT21, usually once only.
 // TWI must already be powered up.
-static void SHT21_init(I2C_TypeDef *i2c)
+static void SHT21_init()
 {
-////    if(SHT21_USE_REDUCED_PRECISION) {
-//        // Soft reset in order to sample at reduced precision.
-//        uint8_t cmd_ureg = SHT21_I2C_CMD_USERREG;
-//        I2C_TransferSeq_TypeDef msg;
-//        msg.addr = (SHT21_I2C_ADDR << 1);
-//        msg.buf[0].data = &cmd_ureg;
-//        msg.buf[0].len = 1;
-//        msg.flags = I2C_FLAG_WRITE;
-//        auto write1 = I2CSPM_transfer(i2c, msg); // initMsg
-//
-//        // ????
-//        uint8_t rxMsg = 0;
-//        msg.buf[0].data = &rxMsg;
-//        msg.buf[0].len = 1;
-//        msg.flags = I2C_FLAG_READ;
-//        auto read = I2CSPM_transfer(i2c, msg);
-//        const uint8_t curUR = rxMsg;
-//
-//        // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
-//        const uint8_t newUR = (curUR & 0x38) | 3;
-//        uint8_t configMsg[2] = { SHT21_I2C_CMD_USERREG, newUR};
-////        auto write2 = I2C::i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
-//    }
-//    uint8_t SI7021_CMD_READ_ID_BYTE2[2] =  {0xFC, 0xC9};
+//    if(SHT21_USE_REDUCED_PRECISION) {
+        // Soft reset in order to sample at reduced precision.
     uint8_t cmd[1] = { SHT21_I2C_CMD_USERREG };
-    uint8_t result[8];
-    I2C_TransferSeq_TypeDef seq;
-    I2C_TransferReturn_TypeDef ret;
+        uint8_t rxMsg[1] = { 0 };
+        i2c0.read(SHT21_I2C_ADDR, cmd, sizeof(cmd), rxMsg, sizeof(rxMsg));
+        const uint8_t curUR = rxMsg[0];
 
-    seq.addr = SHT21_I2C_ADDR << 1;
-
-//    if( cmdLen > 0 ) {
-
-       seq.flags = I2C_FLAG_WRITE;
-
-       seq.buf[0].data = cmd;
-       seq.buf[0].len  = sizeof(cmd);
-       seq.buf[1].data = result;
-       seq.buf[1].len  = sizeof(result);
+        // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
+        const uint8_t newUR = (curUR & 0x38) | 3;
+        uint8_t configMsg[2] = { (SHT21_I2C_CMD_USERREG & 0xfe) , newUR};
+        i2c0.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
 //    }
-//    else {
-//
-//       seq.flags = I2C_FLAG_READ;
-//
-//       seq.buf[0].data = result;
-//       seq.buf[0].len  = resultLen;
-//    }
-
- ret = I2CSPM_Transfer( i2c, &seq );
-
-
-    SHT21_initialised = true;
+//        SHT21_initialised = true;
 }
 
 int main(void)
@@ -123,9 +84,9 @@ int main(void)
     const int readVal = si7021.read();
 #endif
 
-    I2CSPM_Init(&i2cInit);
+    i2c0.init(i2cInit);
     for (auto i = 0; i < 1000000; ++i) {}
-    SHT21_init(i2cInit.port);
+    SHT21_init();
 
   /* Infinite loop */
   while (1) {
