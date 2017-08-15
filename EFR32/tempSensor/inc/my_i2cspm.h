@@ -7,7 +7,7 @@
 
 #ifndef SRC_MY_I2CSPMCONFIG_H_
 #define SRC_MY_I2CSPMCONFIG_H_
-
+#if 1
 /***************************************************************************//**
  * @file
  * @brief I2C simple poll-based master mode driver for the DK/STK.
@@ -26,6 +26,7 @@ extern "C" {
 #include "em_gpio.h"
 #include "em_i2c.h"
 }
+
 /***************************************************************************//**
  * @defgroup kitdrv Kit Drivers
  * @brief Kit support and drivers
@@ -41,15 +42,18 @@ extern "C" {
  * @{
  ******************************************************************************/
 
+
 /*******************************************************************************
  ********************************   STRUCTS   **********************************
  ******************************************************************************/
+
 /** I2C driver instance initialization structure.
     This data structure contains a number of I2C configuration options
     required for driver instance initialization.
     This struct is passed to @ref I2CSPM_Init() when initializing a I2CSPM
     instance. */
-typedef struct {
+typedef struct
+{
   I2C_TypeDef           *port;          /**< Peripheral port */
   GPIO_Port_TypeDef     sclPort;        /**< SCL pin port number */
   uint8_t               sclPin;         /**< SCL pin number */
@@ -66,46 +70,36 @@ typedef struct {
   I2C_ClockHLR_TypeDef  i2cClhr;        /**< Clock low/high ratio control */
 } I2CSPM_Init_TypeDef;
 
+
 /** Default config for I2C init structure. The default may be overridden
     by a i2cspmconfig.h file. */
-#define I2CSPM_INIT_DEFAULT                                                    \
-  { I2C0,                       /* Use I2C instance 0 */                       \
-    gpioPortC,                  /* SCL port */                                 \
-    10,                          /* SCL pin */                                  \
-    gpioPortC,                  /* SDA port */                                 \
-    11,                          /* SDA pin */                                  \
-    0,                          /* Location */                                 \
-    0,                          /* Use currently configured reference clock */ \
-    I2C_FREQ_STANDARD_MAX,      /* Set to standard rate  */                    \
-    i2cClockHLRStandard,        /* Set to use 4:4 low/high duty cycle */       \
+//#if !defined( I2CSPM_INIT_DEFAULT )
+/* I2C SPM driver config. This default override only works if one I2C interface
+   is in use. If multiple interfaces are in use, define the peripheral setup
+   inside the application in a I2CSPM_Init_TypeDef and then pass the initialization
+   struct to I2CSPM_Init(). */
+// TODO NOTE! the locations seem to be very important. What are they?
+#define I2CSPM_INIT_DEFAULT                                                   \
+  { I2C0,                      /* Use I2C instance 0 */                       \
+    gpioPortC,                 /* SCL port */                                 \
+    10,                        /* SCL pin */                                  \
+    gpioPortC,                 /* SDA port */                                 \
+    11,                        /* SDA pin */                                  \
+    14,                        /* Location of SCL */                          \
+    16,                        /* Location of SDA */                          \
+    0,                         /* Use currently configured reference clock */ \
+    I2C_FREQ_STANDARD_MAX,     /* Set to standard rate  */                    \
+    i2cClockHLRStandard,       /* Set to use 4:4 low/high duty cycle */       \
   }
 
+//#endif
+
+static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
 /*******************************************************************************
  *****************************   PROTOTYPES   **********************************
  ******************************************************************************/
 
-
-class I2CSPM
-{
-private:
-    static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
-    I2CSPM_Init_TypeDef i2cConfig;
-
-//    // TX and RX buffers note: unused in blocking transfer.
-    uint8_t rxBuf[16];
-    uint8_t txBuf[16];
-    I2C_TransferReturn_TypeDef transfer(I2C_TransferSeq_TypeDef &seq);
-public:
-
-    void init(I2CSPM_Init_TypeDef &config);
-    I2C_TransferReturn_TypeDef read(uint16_t addr, uint8_t *buf, uint16_t len);
-    I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *buf, uint16_t len);
-};
-
-namespace I2C {
-// class def
-extern I2CSPM i2c;
-}
-
-
+void I2CSPM_Init(I2CSPM_Init_TypeDef *init);
+I2C_TransferReturn_TypeDef I2CSPM_Transfer(I2C_TypeDef *i2c, I2C_TransferSeq_TypeDef *seq);
+#endif
 #endif /* SRC_MY_I2CSPMCONFIG_H_ */

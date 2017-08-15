@@ -10,7 +10,7 @@
 
 namespace OTV0P2BASE
 {
-#if 1
+#if 0
 
 
 static constexpr uint8_t SHT21_I2C_ADDR = 0x40;
