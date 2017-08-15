@@ -13,7 +13,7 @@
 
 namespace OTV0P2BASE {
 
-#if 0
+#if 1
 // Minimal lightweight sensor subset.
 // Contains just enough to check availability and to name and get the latest value.
 template <class T>
@@ -128,8 +128,8 @@ class TemperatureC16Base : public Sensor<int_fast16_t>
   };
 #endif
 
-class RoomTemperatureC16_SHT21 final //: public TemperatureC16Base
-  { public: int_fast16_t value = -2048; int_fast16_t read();};
+class RoomTemperatureC16_SHT21 final : public TemperatureC16Base
+  { public: int_fast16_t read();};
 
 
 
