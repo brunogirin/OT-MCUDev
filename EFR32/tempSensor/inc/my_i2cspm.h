@@ -105,19 +105,55 @@ class I2CSPM
 {
 private:
     static constexpr uint32_t I2CSPM_TRANSFER_TIMEOUT = 300000;
+    // Variable to store the i2c config.
     I2CSPM_Init_TypeDef config;
-
-//    // TX and RX buffers note: unused in blocking transfer.
-//    uint8_t rxBuf[16];
-//    uint8_t txBuf[16];
+    /***************************************************************************//**
+     * @brief
+     *   Perform I2C transfer
+     *
+     * @details
+     *   This driver only supports master mode, single bus-master. It does not
+     *   return until the transfer is complete, polling for completion.
+     *
+     * @param[in] seq
+     *   Reference to sequence structure defining the I2C transfer to take place. The
+     *   referenced structure must exist until the transfer has fully completed.
+     ******************************************************************************/
     I2C_TransferReturn_TypeDef transfer(I2C_TransferSeq_TypeDef &seq);
 public:
-
+    /***************************************************************************//**
+     * @brief
+     *   Initalize I2C peripheral
+     *
+     * @details
+     *   This driver supports master mode only, single bus-master. In addition
+     *   to configuring the I2C peripheral module, it also configures DK/STK
+     *   specific setup in order to use the I2C bus.
+     *
+     * @param[in] init
+     *   reference to I2C initialization structure
+     ******************************************************************************/
     void init(I2CSPM_Init_TypeDef &init);
-    I2C_TransferReturn_TypeDef read(uint16_t addr, uint8_t * const cmd, uint16_t cmdLen, uint8_t * const rxBuf, uint16_t rxLen);
-    I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *buf, uint16_t len);
+    /**
+     * @brief   Read from an I2C device.
+     *          This driver works by writing and then reading. Haven't worked out how to get a write then read to work yet (DE20170815)
+     * @param   addr: 7 byte address for the i2c slave. Should be right adjusted (XAAAAAAA) as is internally shifted left.
+     * @param   cmd: Pointer to buffer to write to slave. The buffer must exist until the transfer is completed.
+     * @param   cmdLen: number of bytes in message to be written.
+     * @param   rxBuf: Pointer to buffer to store the response from the slave. The buffer must exist until the transfer is completed.
+     * @param   rxLen: number of bytes in message to be written.
+     */
+    I2C_TransferReturn_TypeDef read(uint16_t addr, uint8_t * cmd, uint16_t cmdLen, uint8_t * rxBuf, uint16_t rxLen);
+    /**
+     * @brief   Write to an I2C device.
+     * @param   addr: 7 byte address for the i2c slave. Should be right adjusted (XAAAAAAA) as is internally shifted left.
+     * @param   cmd: Pointer to buffer to write to slave. The buffer must exist until the transfer is completed.
+     * @param   len: number of bytes in message to be written.
+     */
+    I2C_TransferReturn_TypeDef write(uint16_t addr, uint8_t *cmd, uint16_t len);
 };
 
+// I2C driver for bus 0
 extern I2CSPM i2c0;
 
 

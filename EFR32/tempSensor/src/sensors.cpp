@@ -61,16 +61,15 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
   // Initialise/config if necessary.
   if(!SHT21_initialised) { SHT21_init(); }
 
-#if 0
   // Max RH measurement time:
   //   * 14-bit: 85ms
   //   * 12-bit: 22ms
   //   * 11-bit: 11ms
   // Use blocking data fetch for now.
-  uint8_t cmd_temp_hold = SHT21_I2C_CMD_TEMP_HOLD;
-  auto write1 = i2c0.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
-
-#if 0
+  uint8_t cmd_temp_hold[1] = { SHT21_I2C_CMD_TEMP_HOLD };
+  uint8_t rxMsg[2] = {0, 0};
+  i2c0.read(SHT21_I2C_ADDR, cmd_temp_hold, sizeof(cmd_temp_hold), rxMsg, sizeof(rxMsg));
+#if 0  // This was in between the split write/read model on the arduino.
   if(SHT21_USE_REDUCED_PRECISION)
     // Should cover 12-bit conversion (22ms).
     { OTV0P2BASE::nap(WDTO_30MS); }
@@ -78,10 +77,8 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
     // Should be plenty for slowest (14-bit) conversion (85ms).
     { OTV0P2BASE::sleepLowPowerMs(90); }
 #endif
-  for (auto i = 0; i<100000; ++i){}
-  uint8_t rxMsg[2] = {0, 0};
-  i2c0.read(SHT21_I2C_ADDR, rxMsg, sizeof(rxMsg));
-#if 0
+
+#if 0  // This was the polling bit on the arduino.
   while(Wire.available() < 3)
     {
       // Wait for data, but avoid rolling over the end of a minor cycle...
@@ -89,8 +86,6 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
       { return(DEFAULT_INVALID_TEMP); } // Failure value: may be able to to better.
     }
 #endif
-//  uint_fast16_t rawTemp = (Wire.read() << 8);
-//  rawTemp |= (Wire.read() & 0xfc); // Clear status ls bits.
   uint_fast16_t rawTemp = (rxMsg[0] << 8);
   rawTemp |= (rxMsg[1] & 0xfc);
 
@@ -113,8 +108,6 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
 #endif
   value = c16;
   return(c16);
-#endif
-  return 0;
   }
 
 #endif

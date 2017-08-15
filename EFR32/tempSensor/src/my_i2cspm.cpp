@@ -39,78 +39,8 @@ I2CSPM i2c0;
  *   specific setup in order to use the I2C bus.
  *
  * @param[in] init
- *   Pointer to I2C initialization structure
+ *   reference to I2C initialization structure
  ******************************************************************************/
-#if 0
-void I2CSPM_Init(I2CSPM_Init_TypeDef *init)
-{
-  int i;
-  CMU_Clock_TypeDef i2cClock;
-  I2C_Init_TypeDef i2cInit;
-
-  EFM_ASSERT(init != NULL);
-
-  CMU_ClockEnable(cmuClock_HFPER, true);
-
-  /* Select I2C peripheral clock */
-  if (false)
-  {
-#if defined( I2C0 )
-  }
-  else if (init->port == I2C0)
-  {
-    i2cClock = cmuClock_I2C0;
-#endif
-#if defined( I2C1 )
-  }
-  else if (init->port == I2C1)
-  {
-    i2cClock = cmuClock_I2C1;
-#endif
-  }
-  else
-  {
-    /* I2C clock is not defined */
-    EFM_ASSERT(false);
-    return;
-  }
-  CMU_ClockEnable(i2cClock, true);
-
-  /* Output value must be set to 1 to not drive lines low. Set
-     SCL first, to ensure it is high before changing SDA. */
-  GPIO_PinModeSet(init->sclPort, init->sclPin, gpioModeWiredAndPullUp, 1);
-  GPIO_PinModeSet(init->sdaPort, init->sdaPin, gpioModeWiredAndPullUp, 1);
-
-  /* In some situations, after a reset during an I2C transfer, the slave
-     device may be left in an unknown state. Send 9 clock pulses to
-     set slave in a defined state. */
-  for (i = 0; i < 9; i++)
-  {
-    GPIO_PinOutSet(init->sclPort, init->sclPin);
-    GPIO_PinOutClear(init->sclPort, init->sclPin);
-  }
-
-  /* Enable pins and set location */
-#if defined (_I2C_ROUTEPEN_MASK)
-  init->port->ROUTEPEN  = I2C_ROUTEPEN_SDAPEN | I2C_ROUTEPEN_SCLPEN;
-  init->port->ROUTELOC0 = (init->portLocationSda << _I2C_ROUTELOC0_SDALOC_SHIFT)
-                          | (init->portLocationScl << _I2C_ROUTELOC0_SCLLOC_SHIFT);
-#else
-  init->port->ROUTE = I2C_ROUTE_SDAPEN |
-                      I2C_ROUTE_SCLPEN |
-                      (init->portLocation << _I2C_ROUTE_LOCATION_SHIFT);
-#endif
-
-  /* Set emlib init parameters */
-  i2cInit.enable = true;
-  i2cInit.master = true; /* master mode only */
-  i2cInit.freq = init->i2cMaxFreq;
-  i2cInit.refFreq = init->i2cRefFreq;
-  i2cInit.clhr = init->i2cClhr;
-
-  I2C_Init(init->port, &i2cInit);
-}
-#endif
 void I2CSPM::init(I2CSPM_Init_TypeDef &init)
 {
     // Store config
@@ -181,10 +111,13 @@ void I2CSPM::init(I2CSPM_Init_TypeDef &init)
 }
 
 /**
- * @brief   read from an I2C device.
+ * @brief   Read from an I2C device.
+ *          This driver works by writing and then reading. Haven't worked out how to get a write then read to work yet (DE20170815)
  * @param   addr: 7 byte address for the i2c slave. Should be right adjusted (XAAAAAAA) as is internally shifted left.
- * @param   buf: Pointer to buffer to store the response from the slave.
- * @param   len: number of bytes in message to be written.
+ * @param   cmd: Pointer to buffer to write to slave. The buffer must exist until the transfer is completed.
+ * @param   cmdLen: number of bytes in message to be written.
+ * @param   rxBuf: Pointer to buffer to store the response from the slave. The buffer must exist until the transfer is completed.
+ * @param   rxLen: number of bytes in message to be written.
  */
 I2C_TransferReturn_TypeDef I2CSPM::read(uint16_t addr, uint8_t * const cmd, uint16_t cmdLen, uint8_t * const rxBuf, uint16_t rxLen)
 {
@@ -194,8 +127,10 @@ I2C_TransferReturn_TypeDef I2CSPM::read(uint16_t addr, uint8_t * const cmd, uint
     I2C_TransferSeq_TypeDef seq;
     seq.addr = (addr << 1);
     seq.flags = I2C_FLAG_WRITE_READ;
+    // First this command is transmitted
     seq.buf[0].data = cmd;
     seq.buf[0].len  = cmdLen;
+    // Then the response is placed in this buffer
     seq.buf[1].data = rxBuf;
     seq.buf[1].len  = rxLen;
 
@@ -206,17 +141,17 @@ I2C_TransferReturn_TypeDef I2CSPM::read(uint16_t addr, uint8_t * const cmd, uint
 /**
  * @brief   Write to an I2C device.
  * @param   addr: 7 byte address for the i2c slave. Should be right adjusted (XAAAAAAA) as is internally shifted left.
- * @param   buf: Pointer to buffer to write to slave.
+ * @param   cmd: Pointer to buffer to write to slave. The buffer must exist until the transfer is completed.
  * @param   len: number of bytes in message to be written.
  */
-I2C_TransferReturn_TypeDef I2CSPM::write(uint16_t addr, uint8_t * const buf, uint16_t len)
+I2C_TransferReturn_TypeDef I2CSPM::write(uint16_t addr, uint8_t * const cmd, uint16_t len)
 {
-    if(nullptr == buf || 0 == len) { return (i2cTransferUsageFault); }
+    if(nullptr == cmd || 0 == len) { return (i2cTransferUsageFault); }
 
     I2C_TransferSeq_TypeDef seq;
     seq.addr = (addr << 1);
     seq.flags = I2C_FLAG_WRITE;
-    seq.buf[0].data = buf;
+    seq.buf[0].data = cmd;
     seq.buf[0].len  = len;
 
     return (i2c0.transfer(seq));
@@ -231,11 +166,8 @@ I2C_TransferReturn_TypeDef I2CSPM::write(uint16_t addr, uint8_t * const buf, uin
  *   This driver only supports master mode, single bus-master. It does not
  *   return until the transfer is complete, polling for completion.
  *
- * @param[in] i2c
- *   Pointer to the peripheral port
- *
  * @param[in] seq
- *   Pointer to sequence structure defining the I2C transfer to take place. The
+ *   Reference to sequence structure defining the I2C transfer to take place. The
  *   referenced structure must exist until the transfer has fully completed.
  ******************************************************************************/
 I2C_TransferReturn_TypeDef I2CSPM::transfer(I2C_TransferSeq_TypeDef &seq)
