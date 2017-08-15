@@ -10,7 +10,7 @@
 
 namespace OTV0P2BASE
 {
-#if 0
+#if 1
 
 
 static constexpr uint8_t SHT21_I2C_ADDR = 0x40;
@@ -33,18 +33,15 @@ static void SHT21_init()
 {
     if(SHT21_USE_REDUCED_PRECISION) {
         // Soft reset in order to sample at reduced precision.
-        uint8_t cmd_ureg = SHT21_I2C_CMD_USERREG;
-        auto write1 = I2C::i2c.write(SHT21_I2C_ADDR, &cmd_ureg, 1); // initMsg
-
-        // ????
-        uint8_t rxMsg = 0;
-        auto read = I2C::i2c.read(SHT21_I2C_ADDR, &rxMsg, 1);
-        const uint8_t curUR = rxMsg;
+        uint8_t cmd[1] = { SHT21_I2C_CMD_USERREG };
+        uint8_t rxMsg[1] = { 0 };
+        i2c0.read(SHT21_I2C_ADDR, cmd, sizeof(cmd), rxMsg, sizeof(rxMsg));
+        const uint8_t curUR = rxMsg[0];
 
         // Preserve reserved bits (3, 4, 5) and sample 8-bit RH (for for 1%) and 12-bit temp (for 1/16C).
         const uint8_t newUR = (curUR & 0x38) | 3;
-        uint8_t configMsg[2] = { SHT21_I2C_CMD_USERREG, newUR};
-        auto write2 = I2C::i2c.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
+        uint8_t configMsg[2] = { (SHT21_I2C_CMD_USERREG & 0xfe) , newUR};
+        i2c0.write(SHT21_I2C_ADDR, configMsg, sizeof(configMsg)); // setupMsg
     }
     SHT21_initialised = true;
 }
@@ -64,14 +61,14 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
   // Initialise/config if necessary.
   if(!SHT21_initialised) { SHT21_init(); }
 
+#if 0
   // Max RH measurement time:
   //   * 14-bit: 85ms
   //   * 12-bit: 22ms
   //   * 11-bit: 11ms
   // Use blocking data fetch for now.
   uint8_t cmd_temp_hold = SHT21_I2C_CMD_TEMP_HOLD;
-  auto write1 = I2C::i2c.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
-
+  auto write1 = i2c0.write(SHT21_I2C_ADDR, &cmd_temp_hold, 1); // initMsg
 
 #if 0
   if(SHT21_USE_REDUCED_PRECISION)
@@ -83,7 +80,7 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
 #endif
   for (auto i = 0; i<100000; ++i){}
   uint8_t rxMsg[2] = {0, 0};
-  I2C::i2c.read(SHT21_I2C_ADDR, rxMsg, sizeof(rxMsg));
+  i2c0.read(SHT21_I2C_ADDR, rxMsg, sizeof(rxMsg));
 #if 0
   while(Wire.available() < 3)
     {
@@ -116,6 +113,8 @@ int_fast16_t RoomTemperatureC16_SHT21::read()
 #endif
   value = c16;
   return(c16);
+#endif
+  return 0;
   }
 
 #endif
