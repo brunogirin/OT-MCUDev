@@ -27,14 +27,14 @@
 // enter_DefaultMode_from_RESET
 //==============================================================================
 extern void enter_DefaultMode_from_RESET(void) {
-    // $[Config Calls]
-    CHIP_Init();
+	// $[Config Calls]
+	CHIP_Init();
 
-    EMU_enter_DefaultMode_from_RESET();
-    CMU_enter_DefaultMode_from_RESET();
-    I2C0_enter_DefaultMode_from_RESET();
-    PORTIO_enter_DefaultMode_from_RESET();
-    // [Config Calls]$
+	EMU_enter_DefaultMode_from_RESET();
+	CMU_enter_DefaultMode_from_RESET();
+	I2C0_enter_DefaultMode_from_RESET();
+	PORTIO_enter_DefaultMode_from_RESET();
+	// [Config Calls]$
 
 }
 
@@ -43,37 +43,37 @@ extern void enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void EMU_enter_DefaultMode_from_RESET(void) {
 
-    // $[EMU Initialization]
-    /* Initialize DCDC regulator */
-    EMU_DCDCInit_TypeDef dcdcInit = EMU_DCDCINIT_DEFAULT;
+	// $[EMU Initialization]
+	/* Initialize DCDC regulator */
+	EMU_DCDCInit_TypeDef dcdcInit = EMU_DCDCINIT_DEFAULT;
 
-    dcdcInit.powerConfig = emuPowerConfig_DcdcToDvdd;
-    dcdcInit.dcdcMode = emuDcdcMode_LowNoise;
-    dcdcInit.mVout = 1800;
-    dcdcInit.em01LoadCurrent_mA = 15;
-    dcdcInit.em234LoadCurrent_uA = 10;
-    dcdcInit.maxCurrent_mA = 200;
-    dcdcInit.anaPeripheralPower = emuDcdcAnaPeripheralPower_DCDC;
-    dcdcInit.reverseCurrentControl = 160;
+	dcdcInit.powerConfig = emuPowerConfig_DcdcToDvdd;
+	dcdcInit.dcdcMode = emuDcdcMode_LowNoise;
+	dcdcInit.mVout = 1800;
+	dcdcInit.em01LoadCurrent_mA = 15;
+	dcdcInit.em234LoadCurrent_uA = 10;
+	dcdcInit.maxCurrent_mA = 200;
+	dcdcInit.anaPeripheralPower = emuDcdcAnaPeripheralPower_DCDC;
+	dcdcInit.reverseCurrentControl = 160;
 
-    EMU_DCDCInit(&dcdcInit);
-    /* Initialize EM2/EM3 mode */
-    EMU_EM23Init_TypeDef em23Init = EMU_EM23INIT_DEFAULT;
+	EMU_DCDCInit(&dcdcInit);
+	/* Initialize EM2/EM3 mode */
+	EMU_EM23Init_TypeDef em23Init = EMU_EM23INIT_DEFAULT;
 
-    em23Init.em23VregFullEn = 0;
+	em23Init.em23VregFullEn = 0;
 
-    EMU_EM23Init(&em23Init);
-    /* Initialize EM4H/S mode */
-    EMU_EM4Init_TypeDef em4Init = EMU_EM4INIT_DEFAULT;
+	EMU_EM23Init(&em23Init);
+	/* Initialize EM4H/S mode */
+	EMU_EM4Init_TypeDef em4Init = EMU_EM4INIT_DEFAULT;
 
-    em4Init.retainLfrco = 0;
-    em4Init.retainLfxo = 0;
-    em4Init.retainUlfrco = 0;
-    em4Init.em4State = emuEM4Shutoff;
-    em4Init.pinRetentionMode = emuPinRetentionDisable;
+	em4Init.retainLfrco = 0;
+	em4Init.retainLfxo = 0;
+	em4Init.retainUlfrco = 0;
+	em4Init.em4State = emuEM4Shutoff;
+	em4Init.pinRetentionMode = emuPinRetentionDisable;
 
-    EMU_EM4Init(&em4Init);
-    // [EMU Initialization]$
+	EMU_EM4Init(&em4Init);
+	// [EMU Initialization]$
 
 }
 
@@ -89,58 +89,58 @@ extern void LFXO_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void CMU_enter_DefaultMode_from_RESET(void) {
 
-    // $[High Frequency Clock Setup]
-    /* Initializing HFXO */
-    CMU_HFXOInit_TypeDef hfxoInit = CMU_HFXOINIT_DEFAULT;
+	// $[High Frequency Clock Setup]
+	/* Initializing HFXO */
+	CMU_HFXOInit_TypeDef hfxoInit = CMU_HFXOINIT_DEFAULT;
 
-    CMU_HFXOInit(&hfxoInit);
+	CMU_HFXOInit(&hfxoInit);
 
-    /* Using HFRCO as high frequency clock, HFCLK */
-    CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
-    // [High Frequency Clock Setup]$
+	/* Using HFRCO as high frequency clock, HFCLK */
+	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
+	// [High Frequency Clock Setup]$
 
-    // $[LE clocks enable]
-    // [LE clocks enable]$
+	// $[LE clocks enable]
+	// [LE clocks enable]$
 
-    // $[LFACLK Setup]
-    /* LFACLK is disabled */
-    // [LFACLK Setup]$
-    // $[LFBCLK Setup]
-    /* LFBCLK is disabled */
-    // [LFBCLK Setup]$
-    // $[LFECLK Setup]
-    /* LFECLK is disabled */
-    // [LFECLK Setup]$
-    // $[Peripheral Clock enables]
-    /* Enable clock for HF peripherals */
-    CMU_ClockEnable(cmuClock_HFPER, true);
+	// $[LFACLK Setup]
+	/* LFACLK is disabled */
+	// [LFACLK Setup]$
+	// $[LFBCLK Setup]
+	/* LFBCLK is disabled */
+	// [LFBCLK Setup]$
+	// $[LFECLK Setup]
+	/* LFECLK is disabled */
+	// [LFECLK Setup]$
+	// $[Peripheral Clock enables]
+	/* Enable clock for HF peripherals */
+	CMU_ClockEnable(cmuClock_HFPER, true);
 
-    /* Enable clock for I2C0 */
-    CMU_ClockEnable(cmuClock_I2C0, true);
+	/* Enable clock for I2C0 */
+	CMU_ClockEnable(cmuClock_I2C0, true);
 
-    /* Enable clock for GPIO by default */
-    CMU_ClockEnable(cmuClock_GPIO, true);
+	/* Enable clock for GPIO by default */
+	CMU_ClockEnable(cmuClock_GPIO, true);
 
-    // [Peripheral Clock enables]$
+	// [Peripheral Clock enables]$
 
-    // $[Clock output]
-    /* Disable CLKOUT0 output */
-    CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_CLKOUTSEL0_MASK)
-            | CMU_CTRL_CLKOUTSEL0_DISABLED;
-    /* Disable CLKOUT1 output */
-    CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_CLKOUTSEL1_MASK)
-            | CMU_CTRL_CLKOUTSEL1_DISABLED;
+	// $[Clock output]
+	/* Disable CLKOUT0 output */
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_CLKOUTSEL0_MASK)
+			| CMU_CTRL_CLKOUTSEL0_DISABLED;
+	/* Disable CLKOUT1 output */
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_CLKOUTSEL1_MASK)
+			| CMU_CTRL_CLKOUTSEL1_DISABLED;
 
-    // [Clock output]$
+	// [Clock output]$
 
-    // $[CMU_IO]
-    /* Disable CLKOUT0 pin */
-    CMU->ROUTEPEN &= ~CMU_ROUTEPEN_CLKOUT0PEN;
+	// $[CMU_IO]
+	/* Disable CLKOUT0 pin */
+	CMU->ROUTEPEN &= ~CMU_ROUTEPEN_CLKOUT0PEN;
 
-    /* Disable CLKOUT1 pin */
-    CMU->ROUTEPEN &= ~CMU_ROUTEPEN_CLKOUT1PEN;
+	/* Disable CLKOUT1 pin */
+	CMU->ROUTEPEN &= ~CMU_ROUTEPEN_CLKOUT1PEN;
 
-    // [CMU_IO]$
+	// [CMU_IO]$
 
 }
 
@@ -149,11 +149,11 @@ extern void CMU_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void ADC0_enter_DefaultMode_from_RESET(void) {
 
-    // $[ADC0_Init]
-    // [ADC0_Init]$
+	// $[ADC0_Init]
+	// [ADC0_Init]$
 
-    // $[ADC0_InputConfiguration]
-    // [ADC0_InputConfiguration]$
+	// $[ADC0_InputConfiguration]
+	// [ADC0_InputConfiguration]$
 
 }
 
@@ -162,11 +162,11 @@ extern void ADC0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void ACMP0_enter_DefaultMode_from_RESET(void) {
 
-    // $[ACMP0_Init]
-    // [ACMP0_Init]$
+	// $[ACMP0_Init]
+	// [ACMP0_Init]$
 
-    // $[ACMP0_IO]
-    // [ACMP0_IO]$
+	// $[ACMP0_IO]
+	// [ACMP0_IO]$
 
 }
 
@@ -175,11 +175,11 @@ extern void ACMP0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void ACMP1_enter_DefaultMode_from_RESET(void) {
 
-    // $[ACMP1_Init]
-    // [ACMP1_Init]$
+	// $[ACMP1_Init]
+	// [ACMP1_Init]$
 
-    // $[ACMP1_IO]
-    // [ACMP1_IO]$
+	// $[ACMP1_IO]
+	// [ACMP1_IO]$
 
 }
 
@@ -195,17 +195,17 @@ extern void IDAC0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void RTCC_enter_DefaultMode_from_RESET(void) {
 
-    // $[Compare/Capture Channel 0 init]
-    // [Compare/Capture Channel 0 init]$
+	// $[Compare/Capture Channel 0 init]
+	// [Compare/Capture Channel 0 init]$
 
-    // $[Compare/Capture Channel 1 init]
-    // [Compare/Capture Channel 1 init]$
+	// $[Compare/Capture Channel 1 init]
+	// [Compare/Capture Channel 1 init]$
 
-    // $[Compare/Capture Channel 2 init]
-    // [Compare/Capture Channel 2 init]$
+	// $[Compare/Capture Channel 2 init]
+	// [Compare/Capture Channel 2 init]$
 
-    // $[RTCC init]
-    // [RTCC init]$
+	// $[RTCC init]
+	// [RTCC init]$
 
 }
 
@@ -214,23 +214,23 @@ extern void RTCC_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void USART0_enter_DefaultMode_from_RESET(void) {
 
-    // $[USART_InitAsync]
-    // [USART_InitAsync]$
+	// $[USART_InitAsync]
+	// [USART_InitAsync]$
 
-    // $[USART_InitSync]
-    // [USART_InitSync]$
+	// $[USART_InitSync]
+	// [USART_InitSync]$
 
-    // $[USART_InitPrsTrigger]
-    // [USART_InitPrsTrigger]$
+	// $[USART_InitPrsTrigger]
+	// [USART_InitPrsTrigger]$
 
-    // $[USART_InitIO]
-    // [USART_InitIO]$
+	// $[USART_InitIO]
+	// [USART_InitIO]$
 
-    // $[USART_Misc]
-    // [USART_Misc]$
+	// $[USART_Misc]
+	// [USART_Misc]$
 
-    // $[USART_Enable]
-    // [USART_Enable]$
+	// $[USART_Enable]
+	// [USART_Enable]$
 
 }
 
@@ -239,23 +239,23 @@ extern void USART0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void USART1_enter_DefaultMode_from_RESET(void) {
 
-    // $[USART_InitAsync]
-    // [USART_InitAsync]$
+	// $[USART_InitAsync]
+	// [USART_InitAsync]$
 
-    // $[USART_InitSync]
-    // [USART_InitSync]$
+	// $[USART_InitSync]
+	// [USART_InitSync]$
 
-    // $[USART_InitPrsTrigger]
-    // [USART_InitPrsTrigger]$
+	// $[USART_InitPrsTrigger]
+	// [USART_InitPrsTrigger]$
 
-    // $[USART_InitIO]
-    // [USART_InitIO]$
+	// $[USART_InitIO]
+	// [USART_InitIO]$
 
-    // $[USART_Misc]
-    // [USART_Misc]$
+	// $[USART_Misc]
+	// [USART_Misc]$
 
-    // $[USART_Enable]
-    // [USART_Enable]$
+	// $[USART_Enable]
+	// [USART_Enable]$
 
 }
 
@@ -264,8 +264,8 @@ extern void USART1_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void LEUART0_enter_DefaultMode_from_RESET(void) {
 
-    // $[LEUART0 initialization]
-    // [LEUART0 initialization]$
+	// $[LEUART0 initialization]
+	// [LEUART0 initialization]$
 
 }
 
@@ -274,8 +274,8 @@ extern void LEUART0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void WDOG0_enter_DefaultMode_from_RESET(void) {
 
-    // $[WDOG Initialization]
-    // [WDOG Initialization]$
+	// $[WDOG Initialization]
+	// [WDOG Initialization]$
 
 }
 
@@ -284,26 +284,26 @@ extern void WDOG0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void I2C0_enter_DefaultMode_from_RESET(void) {
 
-    // $[I2C0 I/O setup]
-    /* Set up SCL */
-    I2C0->ROUTEPEN = I2C0->ROUTEPEN | I2C_ROUTEPEN_SCLPEN;
-    I2C0->ROUTELOC0 = (I2C0->ROUTELOC0 & (~_I2C_ROUTELOC0_SCLLOC_MASK))
-            | I2C_ROUTELOC0_SCLLOC_LOC14;
-    /* Set up SDA */
-    I2C0->ROUTEPEN = I2C0->ROUTEPEN | I2C_ROUTEPEN_SDAPEN;
-    I2C0->ROUTELOC0 = (I2C0->ROUTELOC0 & (~_I2C_ROUTELOC0_SDALOC_MASK))
-            | I2C_ROUTELOC0_SDALOC_LOC16;
-    // [I2C0 I/O setup]$
+	// $[I2C0 I/O setup]
+	/* Set up SCL */
+	I2C0->ROUTEPEN = I2C0->ROUTEPEN | I2C_ROUTEPEN_SCLPEN;
+	I2C0->ROUTELOC0 = (I2C0->ROUTELOC0 & (~_I2C_ROUTELOC0_SCLLOC_MASK))
+			| I2C_ROUTELOC0_SCLLOC_LOC14;
+	/* Set up SDA */
+	I2C0->ROUTEPEN = I2C0->ROUTEPEN | I2C_ROUTEPEN_SDAPEN;
+	I2C0->ROUTELOC0 = (I2C0->ROUTELOC0 & (~_I2C_ROUTELOC0_SDALOC_MASK))
+			| I2C_ROUTELOC0_SDALOC_LOC16;
+	// [I2C0 I/O setup]$
 
-    // $[I2C0 initialization]
-    I2C_Init_TypeDef init = I2C_INIT_DEFAULT;
+	// $[I2C0 initialization]
+	I2C_Init_TypeDef init = I2C_INIT_DEFAULT;
 
-    init.enable = 1;
-    init.master = 1;
-    init.freq = I2C_FREQ_STANDARD_MAX;
-    init.clhr = i2cClockHLRStandard;
-    I2C_Init(I2C0, &init);
-    // [I2C0 initialization]$
+	init.enable = 1;
+	init.master = 1;
+	init.freq = I2C_FREQ_STANDARD_MAX;
+	init.clhr = i2cClockHLRStandard;
+	I2C_Init(I2C0, &init);
+	// [I2C0 initialization]$
 
 }
 
@@ -326,23 +326,23 @@ extern void LDMA_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void TIMER0_enter_DefaultMode_from_RESET(void) {
 
-    // $[TIMER0 I/O setup]
-    // [TIMER0 I/O setup]$
+	// $[TIMER0 I/O setup]
+	// [TIMER0 I/O setup]$
 
-    // $[TIMER0 initialization]
-    // [TIMER0 initialization]$
+	// $[TIMER0 initialization]
+	// [TIMER0 initialization]$
 
-    // $[TIMER0 CC0 init]
-    // [TIMER0 CC0 init]$
+	// $[TIMER0 CC0 init]
+	// [TIMER0 CC0 init]$
 
-    // $[TIMER0 CC1 init]
-    // [TIMER0 CC1 init]$
+	// $[TIMER0 CC1 init]
+	// [TIMER0 CC1 init]$
 
-    // $[TIMER0 CC2 init]
-    // [TIMER0 CC2 init]$
+	// $[TIMER0 CC2 init]
+	// [TIMER0 CC2 init]$
 
-    // $[TIMER0 DTI init]
-    // [TIMER0 DTI init]$
+	// $[TIMER0 DTI init]
+	// [TIMER0 DTI init]$
 
 }
 
@@ -351,23 +351,23 @@ extern void TIMER0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void TIMER1_enter_DefaultMode_from_RESET(void) {
 
-    // $[TIMER1 I/O setup]
-    // [TIMER1 I/O setup]$
+	// $[TIMER1 I/O setup]
+	// [TIMER1 I/O setup]$
 
-    // $[TIMER1 initialization]
-    // [TIMER1 initialization]$
+	// $[TIMER1 initialization]
+	// [TIMER1 initialization]$
 
-    // $[TIMER1 CC0 init]
-    // [TIMER1 CC0 init]$
+	// $[TIMER1 CC0 init]
+	// [TIMER1 CC0 init]$
 
-    // $[TIMER1 CC1 init]
-    // [TIMER1 CC1 init]$
+	// $[TIMER1 CC1 init]
+	// [TIMER1 CC1 init]$
 
-    // $[TIMER1 CC2 init]
-    // [TIMER1 CC2 init]$
+	// $[TIMER1 CC2 init]
+	// [TIMER1 CC2 init]$
 
-    // $[TIMER1 CC3 init]
-    // [TIMER1 CC3 init]$
+	// $[TIMER1 CC3 init]
+	// [TIMER1 CC3 init]$
 
 }
 
@@ -376,20 +376,20 @@ extern void TIMER1_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void LETIMER0_enter_DefaultMode_from_RESET(void) {
 
-    // $[LETIMER0 Compare Values]
-    // [LETIMER0 Compare Values]$
+	// $[LETIMER0 Compare Values]
+	// [LETIMER0 Compare Values]$
 
-    // $[LETIMER0 Repeat Values]
-    // [LETIMER0 Repeat Values]$
+	// $[LETIMER0 Repeat Values]
+	// [LETIMER0 Repeat Values]$
 
-    // $[LETIMER0 Initialization]
-    // [LETIMER0 Initialization]$
+	// $[LETIMER0 Initialization]
+	// [LETIMER0 Initialization]$
 
-    // $[LETIMER0 PRS Input Triggers]
-    // [LETIMER0 PRS Input Triggers]$
+	// $[LETIMER0 PRS Input Triggers]
+	// [LETIMER0 PRS Input Triggers]$
 
-    // $[LETIMER0 I/O setup]
-    // [LETIMER0 I/O setup]$
+	// $[LETIMER0 I/O setup]
+	// [LETIMER0 I/O setup]$
 
 }
 
@@ -398,8 +398,8 @@ extern void LETIMER0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void CRYOTIMER_enter_DefaultMode_from_RESET(void) {
 
-    // $[CRYOTIMER_Init]
-    // [CRYOTIMER_Init]$
+	// $[CRYOTIMER_Init]
+	// [CRYOTIMER_Init]$
 
 }
 
@@ -408,11 +408,11 @@ extern void CRYOTIMER_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void PCNT0_enter_DefaultMode_from_RESET(void) {
 
-    // $[PCNT0 I/O setup]
-    // [PCNT0 I/O setup]$
+	// $[PCNT0 I/O setup]
+	// [PCNT0 I/O setup]$
 
-    // $[PCNT0 initialization]
-    // [PCNT0 initialization]$
+	// $[PCNT0 initialization]
+	// [PCNT0 initialization]$
 
 }
 
@@ -421,8 +421,8 @@ extern void PCNT0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void PRS_enter_DefaultMode_from_RESET(void) {
 
-    // $[PRS initialization]
-    // [PRS initialization]$
+	// $[PRS initialization]
+	// [PRS initialization]$
 
 }
 
@@ -431,44 +431,44 @@ extern void PRS_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 
-    // $[Port A Configuration]
-    // [Port A Configuration]$
+	// $[Port A Configuration]
+	// [Port A Configuration]$
 
-    // $[Port B Configuration]
-    // [Port B Configuration]$
+	// $[Port B Configuration]
+	// [Port B Configuration]$
 
-    // $[Port C Configuration]
+	// $[Port C Configuration]
 
-    /* Pin PC10 is configured to Open-drain with pull-up and filter */
-    GPIO_PinModeSet(gpioPortC, 10, gpioModeWiredAndPullUpFilter, 0);
+	/* Pin PC10 is configured to Open-drain with pull-up and filter */
+	GPIO_PinModeSet(gpioPortC, 10, gpioModeWiredAndPullUpFilter, 0);
 
-    /* Pin PC11 is configured to Open-drain with pull-up and filter */
-    GPIO_PinModeSet(gpioPortC, 11, gpioModeWiredAndPullUpFilter, 0);
-    // [Port C Configuration]$
+	/* Pin PC11 is configured to Open-drain with pull-up and filter */
+	GPIO_PinModeSet(gpioPortC, 11, gpioModeWiredAndPullUpFilter, 0);
+	// [Port C Configuration]$
 
-    // $[Port D Configuration]
+	// $[Port D Configuration]
 
-    /* Pin PD15 is configured to Push-pull */
-    GPIO_PinModeSet(gpioPortD, 15, gpioModePushPull, 0);
-    // [Port D Configuration]$
+	/* Pin PD15 is configured to Push-pull */
+	GPIO_PinModeSet(gpioPortD, 15, gpioModePushPull, 0);
+	// [Port D Configuration]$
 
-    // $[Port E Configuration]
-    // [Port E Configuration]$
+	// $[Port E Configuration]
+	// [Port E Configuration]$
 
-    // $[Port F Configuration]
+	// $[Port F Configuration]
 
-    /* Pin PF4 is configured to Push-pull */
-    GPIO_PinModeSet(gpioPortF, 4, gpioModePushPull, 0);
+	/* Pin PF4 is configured to Push-pull */
+	GPIO_PinModeSet(gpioPortF, 4, gpioModePushPull, 0);
 
-    /* Pin PF5 is configured to Push-pull with alternate control */
-    GPIO_PinModeSet(gpioPortF, 5, gpioModePushPullAlternate, 0);
+	/* Pin PF5 is configured to Push-pull with alternate control */
+	GPIO_PinModeSet(gpioPortF, 5, gpioModePushPullAlternate, 0);
 
-    /* Pin PF6 is configured to Input enabled with filter */
-    GPIO_PinModeSet(gpioPortF, 6, gpioModeInput, 1);
+	/* Pin PF6 is configured to Input enabled with filter */
+	GPIO_PinModeSet(gpioPortF, 6, gpioModeInput, 1);
 
-    /* Pin PF7 is configured to Input enabled with filter */
-    GPIO_PinModeSet(gpioPortF, 7, gpioModeInput, 1);
-    // [Port F Configuration]$
+	/* Pin PF7 is configured to Input enabled with filter */
+	GPIO_PinModeSet(gpioPortF, 7, gpioModeInput, 1);
+	// [Port F Configuration]$
 
 }
 

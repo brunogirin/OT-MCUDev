@@ -1,0 +1,4 @@
+h
+loadbin Debug/portingOTLibs.hex",0
+r
+g
