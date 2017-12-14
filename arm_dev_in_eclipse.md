@@ -1,16 +1,14 @@
 # Setting up eclipse for ARM dev
-Based on:
-https://mcuoneclipse.com/2017/07/30/breathing-with-oxygen-diy-arm-cortex-m-cc-ide-and-toolchain-with-eclipse-oxygen/
+Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with Eclipse Oxygen](https://mcuoneclipse.com/2017/07/30/breathing-with-oxygen-diy-arm-cortex-m-cc-ide-and-toolchain-with-eclipse-oxygen/)
 
 1. Download:
     - eclipse c/c++
     - [gcc-arm-non-eabi](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads)
-1. Add GNU MCU Eclipse plugin
-    - See https://gnu-mcu-eclipse.github.io/
+1. Add [GNU MCU Eclipse plugin.](https://gnu-mcu-eclipse.github.io/)
 1. Add gcc-arm-non-eabi to tool path.
     - Window>Preferences>MCU>Global ARM Toolchains Path>Build tools folder
     - Should point to bin directory with all the binaries in it.
-1. Install "J-Link Software and Documentation Pack" from [J-Link download page](https://www.segger.com/downloads/jlink/).
+1. Install "J-Link Software and Documentation Pack" from [J-Link download page.](https://www.segger.com/downloads/jlink/).
 
 
 # Using JLink
