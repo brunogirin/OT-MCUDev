@@ -64,7 +64,7 @@ ${eclipse_home}/gecko_sdk_v2/platform/halconfig/inc/hal-config
 - Defined Symbols:
 
 | Symbol | Assembler | C Compiler | C++ Compiler|
-| :--- | | --- | --- | --- |
+| :--- | --- | --- | --- |
 | HAL_CONFIG=1 | Y | Y | Y |
 | EFR32FG1P133F256GM48=1 | Y | Y | Y |
 | DEBUG=1 | N | Y | Y |
