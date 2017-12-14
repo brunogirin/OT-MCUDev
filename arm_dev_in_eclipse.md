@@ -1,4 +1,4 @@
-# Setting up eclipse for ARM dev
+# Setting up Eclipse for ARM dev
 Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with Eclipse Oxygen](https://mcuoneclipse.com/2017/07/30/breathing-with-oxygen-diy-arm-cortex-m-cc-ide-and-toolchain-with-eclipse-oxygen/)
 
 1. Download:
