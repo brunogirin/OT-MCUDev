@@ -10,5 +10,6 @@
 
 void setupGPIO() {
 	CMU_ClockEnable(cmuClock_GPIO, true);
+	GPIO_PinModeSet(gpioPortF, 4, gpioModePushPull, 0);
 	GPIO_PinModeSet(gpioPortF, 5, gpioModePushPull, 0);
 }
