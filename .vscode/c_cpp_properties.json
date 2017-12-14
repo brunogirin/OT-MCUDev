@@ -25,10 +25,10 @@
                 "${workspaceRoot}/EFR32/portingOTLibs/src"
             ],
             "defines": [
+                "__GNUC__",
                 "HAL_CONFIG=1",
                 "EFR32FG1P133F256GM48=1",
-                "DEBUG=1",
-                "__GNUC__"
+                "DEBUG=1"
             ],
             "intelliSenseMode": "clang-x64",
             "browse": {
