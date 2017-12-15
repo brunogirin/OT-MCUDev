@@ -5,7 +5,7 @@ Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with E
     - eclipse c/c++
     - [gcc-arm-non-eabi](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads)
         Note that cross-compiler for EFR32 not available this way
-        as of 2017/12.
+        as of 2017/12: use efr32 instructions to get this.
 2. Add [GNU MCU Eclipse plugin.](https://gnu-mcu-eclipse.github.io/)
     - See instructions on site above, eg using:
       https://gnu-mcu-eclipse.github.io/plugins/install/
