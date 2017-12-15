@@ -1,7 +1,7 @@
 # Setting up Eclipse for ARM dev
 Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with Eclipse Oxygen](https://mcuoneclipse.com/2017/07/30/breathing-with-oxygen-diy-arm-cortex-m-cc-ide-and-toolchain-with-eclipse-oxygen/)
 
-1. Download:
+1. Download Eclipse and the GNU cross compiler to our ARM target:
     - eclipse c/c++
     - [gcc-arm-non-eabi](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads)
 1. Add [GNU MCU Eclipse plugin.](https://gnu-mcu-eclipse.github.io/)
