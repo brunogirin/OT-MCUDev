@@ -11,8 +11,9 @@ Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with E
       https://gnu-mcu-eclipse.github.io/plugins/install/
       getting the ARM cross-compiler as a minimum,
       and possibly also the Cortex-M templates.
-3. Add gcc-arm-non-eabi to tool path.
+3. Add gcc-arm-non-eabi to tool path, eg within Simplicity Studio.
     - Window>Preferences>MCU>Global ARM Toolchains Path>Build tools folder
+      (Note: on macOS 10.13.X Preferences is the top level menu.)
     - Should point to bin directory with all the binaries in it.
 4. Install "J-Link Software and Documentation Pack" from [J-Link download page.](https://www.segger.com/downloads/jlink/).
 
