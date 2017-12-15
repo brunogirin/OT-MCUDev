@@ -7,6 +7,8 @@ Based on [Breathing with Oxygen: DIY ARM Cortex-M C/C++ IDE and Toolchain with E
         Note that cross-compiler for EFR32 not available this way
         as of 2017/12.
 2. Add [GNU MCU Eclipse plugin.](https://gnu-mcu-eclipse.github.io/)
+    - See instructions on site above, eg using:
+      https://gnu-mcu-eclipse.github.io/plugins/install/
 3. Add gcc-arm-non-eabi to tool path.
     - Window>Preferences>MCU>Global ARM Toolchains Path>Build tools folder
     - Should point to bin directory with all the binaries in it.
