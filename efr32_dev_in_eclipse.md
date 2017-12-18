@@ -3,19 +3,23 @@ Hardware configuration still requires SimplicityStudio.
 
 Before following this guide, you should follow the steps in [arm_dev_in_eclipse](arm_dev_in_eclipse.md), with the following modification:
 - Simplicity Studio V4 is bundled with gcc v4.9q3 so you should download and install that instead of the latest arm-non-eabi-gcc package.
-- I couldn't find that on the official website and had to download it from the Cannonical Launchpad repo instead.
+- I couldn't find that on the official website and had to download it from the Canonical Launchpad repo instead.
 
 
 **NOTE:** PART A lists the steps required to get an existing project compiling. The rest of the steps document the process of making a working project from scratch.
 
 ## PART A: Getting the SDKs
 - Install the required SDKs in Simplicity Studio:
-    - MCU SDK 5.3+ (confusingly, it's refered to as "gecko sdk suite 2.0" after being downloaded.)
+    - MCU SDK 5.3+ (confusingly, it's referred to as "gecko sdk suite 2.0" after being downloaded.)
     - RAILS SDK (for radio. untested.)
-- Copy ARM toolchain into `$ECLIPSE_HOME/toolchain`
-    - Need arm-non-eabi-gcc v4.9q3 (20171212)
 - Softlink gecko sdk into `$ECLIPSE_HOME/gecko_sdk_2`
     - Original location: `SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.0`
+    
+    
+No longer required:   
+ - Copy ARM toolchain into `$ECLIPSE_HOME/toolchain`
+    - Need arm-non-eabi-gcc v4.9q3 (20171212)
+
 
 ## PART B: Creating a project from scratch.
 1. Make a Simplicity Studio MCU Configurator project.
