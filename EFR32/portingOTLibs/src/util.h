@@ -19,7 +19,7 @@ void setupGPIO();
  */
 template<GPIO_Port_TypeDef port, unsigned int pin>
 void setLED(bool on) {
-    if(on) GPIO_PinOutClear(port, pin);  // LEDs are connected to Vcc
+    if(!on) GPIO_PinOutClear(port, pin);  // LEDs are connected to Vcc
     else GPIO_PinOutSet(port, pin);
 }
 

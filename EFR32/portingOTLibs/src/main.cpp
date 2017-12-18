@@ -35,15 +35,14 @@ int main(void)
     auto led1State = true;
     /* Infinite loop */
     while (1) {
-        // Flip LED every time we loop. Should take ~2 s
-        led0State = !led0State;
-        setLED<gpioPortF, 4>(led0State);
         for(auto i = 0; i < 2000; ++i) {
             // Poll subCycleTime and delay 1 ms
             if(255U == OTV0P2BASE::getSubCycleTime()) {
+                setLED<gpioPortF, 4>(true);
+                OTV0P2BASE::delay_ms(10);
+                OTV0P2BASE::forceReset();
                 led1State = !led1State;
                 setLED<gpioPortF, 5>(!led1State);
-                while(255U == OTV0P2BASE::getSubCycleTime()) {}
             }
             OTV0P2BASE::delay_ms(1);
         }
