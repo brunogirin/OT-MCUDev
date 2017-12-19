@@ -27,13 +27,5 @@ void setLED(bool on) {
 //	return GPIO_PinInGet(gpioPortB, PB0_PIN);
 //}
 
-// /**
-//  * @brief	Calculate the number of ticks between interrupts clock should run for.
-//  * @param	Time in ms between interrupts
-//  * @retval	number of ticks.
-//  */
-// uint32_t calcSysTickTicks(uint32_t period);
-
-
 
 #endif /* SRC_UTIL_H_ */
