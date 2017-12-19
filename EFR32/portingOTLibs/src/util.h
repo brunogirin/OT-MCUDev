@@ -12,6 +12,9 @@ extern "C" {
 #include "em_gpio.h"
 }
 
+namespace OTPORT {
+void setupClocks();
+
 void setupGPIO();
 
 /**
@@ -27,5 +30,15 @@ void setLED(bool on) {
 //	return GPIO_PinInGet(gpioPortB, PB0_PIN);
 //}
 
+class Serial {
+private:
+    // Flag to prevent UART_Tx locking up when USART not set up first..
+    bool isSetup = false;
 
+public:
+    void setup(uint32_t baud);
+    bool putchar(uint8_t c);
+};
+
+}
 #endif /* SRC_UTIL_H_ */
