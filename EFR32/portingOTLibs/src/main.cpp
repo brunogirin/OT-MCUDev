@@ -1,7 +1,7 @@
 extern "C" {
 #include "em_device.h"
 #include "em_chip.h"
-// #include "em_cmu.h"
+#include "em_cmu.h"
 
 #include "hal-config.h"
 }
@@ -12,6 +12,8 @@ extern "C" {
 
 #define DEBUG_BREAK __asm__("BKPT #0");
 
+// Default speed is 38 MHz so div2 must be enabled.
+constexpr auto F_CPU = 19000000U;
 OTPORT::Serial serial;
 
 extern "C" {
@@ -24,7 +26,6 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
-    // constexpr auto F_CPU = 38000000U;
     /* Chip errata */
     CHIP_Init();
 
@@ -43,16 +44,16 @@ int main(void)
 
     /* Infinite loop */
     while (1) {
+
         // Poll subCycleTime and delay 1 ms
         const auto subCycleTime = OTV0P2BASE::getSubCycleTime();
         if (0U == subCycleTime) { ledFlashed = false; }
         else if((255U == subCycleTime) && (!ledFlashed)) {
             ledFlashed = true;
             ledState = !ledState;
-            OTPORT::setLED<gpioPortF, 4>(ledState);
-            OTPORT::setLED<gpioPortF, 5>(!ledState);
-
-            serial.putchar('a');
+            OTPORT::setPin<gpioPortF, 4>(ledState);
+            OTPORT::setPin<gpioPortF, 5>(!ledState);
         }
+
     }
 }

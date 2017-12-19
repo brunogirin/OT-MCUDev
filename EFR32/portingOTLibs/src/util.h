@@ -21,7 +21,7 @@ void setupGPIO();
  * @brief   testing turning a pin on/off with templates
  */
 template<GPIO_Port_TypeDef port, unsigned int pin>
-void setLED(bool on) {
+void setPin(bool on) {
     if(!on) GPIO_PinOutClear(port, pin);  // LEDs are connected to Vcc
     else GPIO_PinOutSet(port, pin);
 }
