@@ -78,6 +78,7 @@
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.950749095" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/portingOTLibs/CMSIS/EFR32FG1P}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OTRadioLink/silabs_drivers/cppDrivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/portingOTLibs/emlib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/platform/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/hardware/kit/common/bsp&quot;"/>
@@ -100,6 +101,7 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.42189624" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/platform/CMSIS/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/hardware/kit/common/bsp&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OTRadioLink/silabs_drivers/cppDrivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/hardware/kit/common/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/platform/emlib/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${eclipse_home}/gecko_sdk_v2/platform/Device/SiliconLabs/EFR32FG1P/Include&quot;"/>
@@ -127,8 +129,8 @@
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnosys.2040729551" name="Do not use syscalls (--specs=nosys.specs)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnosys" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnano.962527653" name="Use newlib-nano (--specs=nano.specs)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnano" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths.929643883" name="Library search path (-L)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths" useByScannerDiscovery="false" valueType="libPaths"/>
-								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs.485204918" name="Libraries (-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs" useByScannerDiscovery="false" valueType="libs"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths.929643883" name="Library search path (-L)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths" useByScannerDiscovery="false"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs.485204918" name="Libraries (-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs" useByScannerDiscovery="false"/>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.input.1123170971" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
