@@ -1,7 +1,7 @@
 extern "C" {
 #include "em_device.h"
 #include "em_chip.h"
-#include "em_cmu.h"
+// #include "em_cmu.h"
 
 #include "hal-config.h"
 }
@@ -11,6 +11,8 @@ extern "C" {
 #include "OTV0P2BASE_Sleep.h"
 
 #define DEBUG_BREAK __asm__("BKPT #0");
+
+OTPORT::Serial serial;
 
 extern "C" {
 // SysTick emulates subcycleTime
@@ -22,8 +24,6 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
-    OTPORT::Serial serial;
-
     // constexpr auto F_CPU = 38000000U;
     /* Chip errata */
     CHIP_Init();

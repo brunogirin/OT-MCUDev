@@ -27,30 +27,43 @@ void setupGPIO() {
 }
 
 // 
-void Serial::setup(uint32_t baud) {
+void Serial::setup(const uint32_t baud) {
 	    // /* Initialize with default settings and then update fields according to application requirements. */
     USART_InitAsync_TypeDef initAsync = USART_INITASYNC_DEFAULT;
     initAsync.baudrate = baud;
-    USART_InitAsync(USART0, &initAsync);
+    USART_InitAsync(dev, &initAsync);
 
     // /* Enable I/O and set location */
-    USART0->ROUTEPEN |= USART_ROUTEPEN_RXPEN | USART_ROUTEPEN_TXPEN;
-    USART0->ROUTELOC0 = (USART0->ROUTELOC0
+    dev->ROUTEPEN |= USART_ROUTEPEN_RXPEN | USART_ROUTEPEN_TXPEN;
+    dev->ROUTELOC0 = (dev->ROUTELOC0
                         & ~(_USART_ROUTELOC0_TXLOC_MASK
                             | _USART_ROUTELOC0_RXLOC_MASK))
-                        | (0 << _USART_ROUTELOC0_TXLOC_SHIFT)
-                        | (0 << _USART_ROUTELOC0_RXLOC_SHIFT);
+                        | (outputNo << _USART_ROUTELOC0_TXLOC_SHIFT)
+                        | (outputNo << _USART_ROUTELOC0_RXLOC_SHIFT);
     /* To avoid false start, configure TX pin as initial high */
-    GPIO_PinModeSet((GPIO_Port_TypeDef)AF_USART0_TX_PORT(0), AF_USART0_TX_PIN(0), gpioModePushPull, 1);
-    GPIO_PinModeSet((GPIO_Port_TypeDef)AF_USART0_RX_PORT(0), AF_USART0_RX_PIN(0), gpioModeInput, 0);
+    GPIO_PinModeSet((GPIO_Port_TypeDef)AF_USART0_TX_PORT(outputNo), AF_USART0_TX_PIN(outputNo), gpioModePushPull, 1);
+    GPIO_PinModeSet((GPIO_Port_TypeDef)AF_USART0_RX_PORT(outputNo), AF_USART0_RX_PIN(outputNo), gpioModeInput, 0);
 	isSetup = true;
 }
 
-//
-bool Serial::putchar(uint8_t c) {
+// True if USART not inited.
+bool Serial::putchar(const uint8_t c) {
 	if (!isSetup) return true;
-	USART_Tx(USART0, c);
+	USART_Tx(dev, c);
 	return false;
+}
+
+// returns -1 if USART not inited.
+int32_t Serial::print(const uint8_t *const buf, const uint8_t len) {
+	if ((nullptr == buf) || (!isSetup)) return -1;
+	for (auto *ip = buf; ip != buf+len; ++ip) USART_Tx(dev, *ip);
+	return len;
+}
+int32_t Serial::println(const uint8_t *const buf, const uint8_t len) {
+	auto retval = print(buf, len);
+	if (-1 == retval) return -1;
+	USART_Tx(dev, '\n');
+	return (retval + 1);
 }
 
 }
