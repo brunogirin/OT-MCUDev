@@ -16,8 +16,6 @@ extern "C" {
 // SysTick emulates subcycleTime
 // auto subCycleTime = 0U;
 void SysTick_Handler(void) {
-    // subCycleTime += 1;
-    // subCycleTime = (256U == subCycleTime) ? 0 : subCycleTime;
     OTV0P2BASE::tickSubCycle();
 }
 }
