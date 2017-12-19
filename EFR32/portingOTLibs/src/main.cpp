@@ -6,9 +6,15 @@ extern "C" {
 #include "hal-config.h"
 }
 
-#include "util.h"
+// #include "i2c_driver.h"
+
 #include "OTV0P2BASE_Util.h"
 #include "OTV0P2BASE_Sleep.h"
+#include "OTV0P2BASE_SensorSHT21.h"
+
+#include "util.h"
+
+
 
 #define DEBUG_BREAK __asm__("BKPT #0");
 
@@ -16,9 +22,12 @@ extern "C" {
 constexpr auto F_CPU = 19000000U;
 OTPORT::Serial serial;
 
+// constexpr auto SI7021_CE_PORT = gpioPortD;
+// constexpr auto SI7021_CE_PIN = 15;
+// OTV0P2BASE::RoomTemperatureC16_SHT21 si7021;
+
 extern "C" {
 // SysTick emulates subcycleTime
-// auto subCycleTime = 0U;
 void SysTick_Handler(void) {
     OTV0P2BASE::tickSubCycle();
 }
@@ -26,6 +35,7 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
+    // I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;  // I2C settings
     /* Chip errata */
     CHIP_Init();
 
@@ -38,13 +48,18 @@ int main(void)
     OTPORT::setupGPIO();
     auto ledFlashed = false;
     auto ledState = true;
+    OTPORT::setPin<gpioPortF, 4>(ledState);
+    OTPORT::setPin<gpioPortF, 5>(!ledState);
 
     // Setup UART
     serial.setup(9600);
 
+    // i2c0.init(i2cInit);
+
+
     /* Infinite loop */
     while (1) {
-
+        
         // Poll subCycleTime and delay 1 ms
         const auto subCycleTime = OTV0P2BASE::getSubCycleTime();
         if (0U == subCycleTime) { ledFlashed = false; }
@@ -53,6 +68,13 @@ int main(void)
             ledState = !ledState;
             OTPORT::setPin<gpioPortF, 4>(ledState);
             OTPORT::setPin<gpioPortF, 5>(!ledState);
+
+            // // test i2c
+            // const auto value = si7021.read();
+            // const uint8_t valueH = (uint8_t) (value >> 8);
+            // const uint8_t valueL = (uint8_t) (value & 0xff);
+            // serial.putchar(valueH);
+            // serial.putchar(valueL);            
         }
 
     }
