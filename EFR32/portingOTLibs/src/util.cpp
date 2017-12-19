@@ -18,6 +18,10 @@ void setupClocks() {
     // * We also need to enable the clock for GPIO to configure pins. */
     CMU_ClockEnable(cmuClock_HFPER, true);
     CMU_ClockEnable(cmuClock_USART0, true);
+
+    // I2C clock
+    CMU_ClockEnable(cmuClock_I2C0, true);
+
 }
 
 
