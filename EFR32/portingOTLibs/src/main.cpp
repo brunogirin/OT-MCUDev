@@ -22,27 +22,27 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
-    constexpr auto F_CPU = 38000000U;
+    // constexpr auto F_CPU = 38000000U;
     /* Chip errata */
     CHIP_Init();
 
     if(OTV0P2BASE::setupEmulated2sSubCycle()) { DEBUG_BREAK; }
     
+    // LED setup
     setupGPIO();
-    auto led0State = true;
-    auto led1State = true;
+    auto ledFlashed = false;
+    auto ledState = true;
+
     /* Infinite loop */
     while (1) {
-        for(auto i = 0; i < 2000; ++i) {
-            // Poll subCycleTime and delay 1 ms
-            if(255U == OTV0P2BASE::getSubCycleTime()) {
-                setLED<gpioPortF, 4>(true);
-                OTV0P2BASE::delay_ms(10);
-                OTV0P2BASE::forceReset();
-                led1State = !led1State;
-                setLED<gpioPortF, 5>(!led1State);
-            }
-            OTV0P2BASE::delay_ms(1);
+        // Poll subCycleTime and delay 1 ms
+        const auto subCycleTime = OTV0P2BASE::getSubCycleTime();
+        if (0U == subCycleTime) { ledFlashed = false; }
+        else if((255U == subCycleTime) && (!ledFlashed)) {
+            ledFlashed = true;
+            ledState = !ledState;
+            setLED<gpioPortF, 4>(ledState);
+            setLED<gpioPortF, 5>(!ledState);
         }
     }
 }
