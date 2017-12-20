@@ -6,7 +6,7 @@ extern "C" {
 #include "hal-config.h"
 }
 
-// #include "i2c_driver.h"
+#include "i2c_driver.h"
 
 #include "OTV0P2BASE_Util.h"
 #include "OTV0P2BASE_Sleep.h"
@@ -22,9 +22,10 @@ extern "C" {
 constexpr auto F_CPU = 19000000U;
 OTPORT::Serial serial;
 
-// constexpr auto SI7021_CE_PORT = gpioPortD;
-// constexpr auto SI7021_CE_PIN = 15;
-// OTV0P2BASE::RoomTemperatureC16_SHT21 si7021;
+constexpr auto SI7021_CE_PORT = gpioPortD;
+constexpr auto SI7021_CE_PIN = 15;
+OTV0P2BASE::RoomTemperatureC16_SHT21 tempC16;
+OTV0P2BASE::HumiditySensorSHT21 humidity;
 
 extern "C" {
 // SysTick emulates subcycleTime
@@ -35,7 +36,7 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
-    // I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;  // I2C settings
+    I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;  // I2C settings
     /* Chip errata */
     CHIP_Init();
 
@@ -54,7 +55,7 @@ int main(void)
     // Setup UART
     serial.setup(9600);
 
-    // i2c0.init(i2cInit);
+    i2c0.init(i2cInit);
 
 
     /* Infinite loop */
@@ -69,12 +70,19 @@ int main(void)
             OTPORT::setPin<gpioPortF, 4>(ledState);
             OTPORT::setPin<gpioPortF, 5>(!ledState);
 
-            // // test i2c
-            // const auto value = si7021.read();
-            // const uint8_t valueH = (uint8_t) (value >> 8);
-            // const uint8_t valueL = (uint8_t) (value & 0xff);
-            // serial.putchar(valueH);
-            // serial.putchar(valueL);            
+            // test i2c
+            {
+                const auto value = tempC16.read();
+                const uint8_t *const value_ptr = (uint8_t *)&value;
+                serial.putchar(*value_ptr);
+                serial.putchar(*(value_ptr+1));
+            }
+            {
+                const auto value = humidity.read();
+                const uint8_t *const value_ptr = (uint8_t *)&value;
+                serial.putchar(*value_ptr);
+                serial.putchar(*(value_ptr+1));   
+            }
         }
 
     }
