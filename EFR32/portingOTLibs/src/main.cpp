@@ -2,6 +2,8 @@ extern "C" {
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_cmu.h"
+#include "em_gpio.h"
+
 
 #include "hal-config.h"
 }
@@ -21,8 +23,8 @@ extern "C" {
 
 // Default speed is 38 MHz so div2 must be enabled.
 constexpr auto F_CPU = 19000000U;
-// extern OTV0P2BASE::EFR32Print Serial;
 
+// SI7021 is drop in replacement for SHT21 (ie has electrical and protocal compatibility).
 constexpr auto SI7021_CE_PORT = gpioPortD;
 constexpr auto SI7021_CE_PIN = 15;
 OTV0P2BASE::RoomTemperatureC16_SHT21 tempC16;
@@ -58,6 +60,8 @@ int main(void)
 
     i2c0.init(i2cInit);
 
+    // Power up SI7021 (it's connected via an analogue switch on the dev board)
+    GPIO_PinModeSet(SI7021_CE_PORT, SI7021_CE_PIN, gpioModePushPull, 1);
 
     /* Infinite loop */
     while (1) {
