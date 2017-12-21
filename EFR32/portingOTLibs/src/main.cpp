@@ -43,7 +43,6 @@ void SysTick_Handler(void) {
 
 int main(void)
 {
-    I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;  // I2C settings
     /* Chip errata */
     CHIP_Init();
 
@@ -65,7 +64,7 @@ int main(void)
     // Engage VCOM on dev board
     // GPIO_PinModeSet(VCOM_ENABLE_PORT, VCOM_ENABLE_PIN, gpioModePushPull, 1);  // Couldn't get this to work.
 
-    i2c0.init(i2cInit);
+    i2c0.init();
 
     // Power up SI7021 (it's connected via an analogue switch on the dev board)
     GPIO_PinModeSet(SI7021_CE_PORT, SI7021_CE_PIN, gpioModePushPull, 1);
