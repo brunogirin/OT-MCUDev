@@ -1,6 +1,5 @@
-h
-loadbin Debug/portingOTLibs.hex,0
 r
+loadbin Debug/portingOTLibs.hex,0
 g
 exit
 
