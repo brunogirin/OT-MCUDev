@@ -8,6 +8,7 @@ extern "C" {
 
 #include "i2c_driver.h"
 
+#include "OTV0P2BASE_Serial_IO.h"
 #include "OTV0P2BASE_Util.h"
 #include "OTV0P2BASE_Sleep.h"
 #include "OTV0P2BASE_SensorSHT21.h"
@@ -20,7 +21,7 @@ extern "C" {
 
 // Default speed is 38 MHz so div2 must be enabled.
 constexpr auto F_CPU = 19000000U;
-OTPORT::Serial serial;
+// extern OTV0P2BASE::EFR32Print Serial;
 
 constexpr auto SI7021_CE_PORT = gpioPortD;
 constexpr auto SI7021_CE_PIN = 15;
@@ -53,7 +54,7 @@ int main(void)
     OTPORT::setPin<gpioPortF, 5>(!ledState);
 
     // Setup UART
-    serial.setup(9600);
+    OTV0P2BASE::Serial.setup(9600);
 
     i2c0.init(i2cInit);
 
@@ -73,15 +74,11 @@ int main(void)
             // test i2c
             {
                 const auto value = tempC16.read();
-                const uint8_t *const value_ptr = (uint8_t *)&value;
-                serial.putchar(*value_ptr);
-                serial.putchar(*(value_ptr+1));
+                OTV0P2BASE::Serial.print(value);
             }
             {
                 const auto value = humidity.read();
-                const uint8_t *const value_ptr = (uint8_t *)&value;
-                serial.putchar(*value_ptr);
-                serial.putchar(*(value_ptr+1));   
+                OTV0P2BASE::Serial.print(value);
             }
         }
 
