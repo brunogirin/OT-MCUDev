@@ -3,6 +3,7 @@ extern "C" {
 #include "em_chip.h"
 #include "em_cmu.h"
 #include "em_gpio.h"
+#include "em_adc.h"
 
 
 #include "hal-config.h"
@@ -39,7 +40,50 @@ extern "C" {
 void SysTick_Handler(void) {
     OTV0P2BASE::tickSubCycle();
 }
+
+// void ADC0_IRQHandler(void)
+// {
+//   ADC_IntClear(ADC0, ADC_IF_SINGLE);
+// }
 }
+
+
+void setupADC()
+{
+    //// ADC
+    // HFPERCLK 
+    CMU_ClockEnable(cmuClock_ADC0, true);
+
+    /* Base the ADC configuration on the default setup. */
+    ADC_Init_TypeDef init = ADC_INIT_DEFAULT;
+    ADC_InitSingle_TypeDef sInit = ADC_INITSINGLE_DEFAULT;
+
+    /* Initialize timebases */
+    init.timebase = ADC_TimebaseCalc(0);
+    init.prescale = ADC_PrescaleCalc(400000, 0);
+    ADC_Init(ADC0, &init);
+
+    /* Set input to temperature sensor. Reference must be 1.25V */
+    sInit.reference = adcRefVDD;
+    //sInit.posSel = adcPosSelTEMP;
+    sInit.posSel = adcPosSelAPORT1YCH19;
+    sInit.negSel = adcNegSelVSS;
+    ADC_InitSingle(ADC0, &sInit);
+
+    /* Setup interrupt generation on completed conversion. */
+    //ADC_IntEnable(ADC0, ADC_IF_SINGLE);
+    //NVIC_EnableIRQ(ADC0_IRQn);
+}
+
+uint32_t adcRead()
+{
+    // Start a conversion
+    ADC_Start(ADC0, adcStartSingle);
+    // wait for conversion to finish
+    while ((ADC0->STATUS & ADC_STATUS_SINGLEDV) == 0);
+    return (ADC_DataSingleGet(ADC0));
+}
+
 
 int main(void)
 {
@@ -69,6 +113,8 @@ int main(void)
     // Power up SI7021 (it's connected via an analogue switch on the dev board)
     GPIO_PinModeSet(SI7021_CE_PORT, SI7021_CE_PIN, gpioModePushPull, 1);
 
+    setupADC();
+
 
     /* Infinite loop */
     while (1) {
@@ -82,15 +128,19 @@ int main(void)
             OTPORT::setPin<gpioPortF, 4>(ledState);
             OTPORT::setPin<gpioPortF, 5>(!ledState);
 
-            // test i2c
-            {
-                const auto value = tempC16.read();
-                OTV0P2BASE::Serial.print(value);
-            }
-            {
-                const auto value = humidity.read();
-                OTV0P2BASE::Serial.print(value);
-            }
+            // // test i2c
+            // {
+            //     const auto value = tempC16.read();
+            //     OTV0P2BASE::Serial.print(value);
+            // }
+            // {
+            //     const auto value = humidity.read();
+            //     OTV0P2BASE::Serial.print(value);
+            // }
+
+
+            OTV0P2BASE::Serial.print(adcRead());
+		    
         }
 
     }
