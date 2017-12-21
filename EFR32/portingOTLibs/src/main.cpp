@@ -24,6 +24,10 @@ extern "C" {
 // Default speed is 38 MHz so div2 must be enabled.
 constexpr auto F_CPU = 19000000U;
 
+// Pin/port to connect serial to USB VCOM on dev board.
+constexpr auto VCOM_ENABLE_PORT = gpioPortA;
+constexpr auto VCOM_ENABLE_PIN = 5;
+
 // SI7021 is drop in replacement for SHT21 (ie has electrical and protocal compatibility).
 constexpr auto SI7021_CE_PORT = gpioPortD;
 constexpr auto SI7021_CE_PIN = 15;
@@ -58,10 +62,14 @@ int main(void)
     // Setup UART
     OTV0P2BASE::Serial.setup(9600);
 
+    // Engage VCOM on dev board
+    // GPIO_PinModeSet(VCOM_ENABLE_PORT, VCOM_ENABLE_PIN, gpioModePushPull, 1);  // Couldn't get this to work.
+
     i2c0.init(i2cInit);
 
     // Power up SI7021 (it's connected via an analogue switch on the dev board)
     GPIO_PinModeSet(SI7021_CE_PORT, SI7021_CE_PIN, gpioModePushPull, 1);
+
 
     /* Infinite loop */
     while (1) {
